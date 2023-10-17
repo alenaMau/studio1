@@ -44,6 +44,7 @@ class Order(models.Model):
     user_id = models.ForeignKey('User', on_delete=models.SET_NULL, null=True)
     status_id = models.ForeignKey('Status', on_delete=models.SET_NULL, null=True)
     date = models.DateField(null=True, blank=True, auto_now_add=True)
+    comment = models.CharField(max_length=200, null=True)
 
     def save_uploaded_photo(self, uploaded_photo):
         filename = os.path.join("orders/photos", str(self.id), uploaded_photo.name)
@@ -63,4 +64,3 @@ class Order(models.Model):
 
 def user_registrated():
     return None
-

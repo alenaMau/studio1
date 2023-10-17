@@ -13,7 +13,7 @@
 <p>Здравствуйте, {{ user.fio }}</p>
 {% else %}
 {% endif %}
-{% if user.is_user %}
+{% if user %}
 <ul class="nav nav-pills">
   <li class="nav-item">
     <a type="button" class="nav-link active" href="{% url 'order_creation' %}">Создать заявку</a><br>
@@ -25,14 +25,33 @@
 <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="button" class="btn btn-outline-primary">Применить фильтр</button>
+    <button type="submit" class="btn btn-outline-primary">Применить фильтр</button>
 </form>
 {% for order in orders %}
 <ul class="list-group list-group-flush">
     <br><h5>Название: {{order.name}}</h5>
-  <li class="list-group-item">Статус: {{order.status_id}}<br>Категория: {{order.category_id}}<br>
-      Дата : {{order.date}}<br>Описание: {{order.description}}
+  <li class="list-group-item">
+      Статус: {{order.status_id}}<br>
+      Категория: {{order.category_id}}<br>
+      Дата : {{order.date}}<br>
+      Описание: {{order.description}}
+      {% if order.status_id.name != 'Принято в работу' and order.status_id.name != 'Выполнено' %}
+        <form method="post" action="{% url 'delete_order' %}">
+            {% csrf_token %}
+            <input type="hidden" name="order_id" value="{{ order.id }}">
+            <button class="btn btn-danger" type="submit" id="delete-button">Удалить</button>
+        </form>
+      {% endif %}
   </li>
 </ul>
 {% endfor %}
+<script>
+document.querySelectorAll('#delete-button').forEach(button => {
+  button.addEventListener('click', function(event) {
+    if (!confirm('Вы уверены, что хотите удалить заявку?')) {
+      event.preventDefault();
+    }
+  });
+});
+</script>
 {% endblock %}

@@ -9,12 +9,14 @@
 <h4>4 последних заявок в статусе «Выполнено» :</h4><br>
 <div class="card-deck">
 {% for order in order_list %}
-<div class="card" style="width: 18rem; height: 18rem;">
-    <img class="card-img-top" src="{{media_url}}{{order.photo}}" alt="Фото">
+<div class="card">
+    <img class="card-img-top" src="{{media_url}}{{order.photo}}" alt="Фото" style="wight: 286px; height: 200px">
     <div class="card-body">
         <h6 class="card-title">Название: {{order.name}}</h6>
         <p class="card-text">Описание: {{order.description}}</p>
-        <p class="card-text">Дата: {{order.date}}</p>
+    </div>
+    <div class="card-footer">
+        Дата: {{order.date}}
     </div>
 </div>
 {% endfor %}

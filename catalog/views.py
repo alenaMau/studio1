@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -29,6 +29,16 @@ def index(request):
                    'media_url': media_url})
 
 
+def delete_order(request):
+    if request.method == 'POST':
+        order_id = request.POST.get('order_id')
+        order = get_object_or_404(Order, id=order_id)
+        if order.user_id != request.user:
+            return redirect('profile')
+        order.delete()
+    return redirect('profile')
+
+
 class BBLoginView(LoginView):
     template_name = 'main/login.html'
 
@@ -40,7 +50,7 @@ def account(required):
 
 @login_required
 def profile(request):
-    orders = Order.objects.filter(user_id=request.user)
+    orders = Order.objects.filter(user_id=request.user).order_by('-date')
     form = StatusFilterForm()
     if request.method == 'POST':
         form = StatusFilterForm(request.POST)

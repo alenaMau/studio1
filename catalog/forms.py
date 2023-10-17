@@ -69,7 +69,7 @@ class OrderCreationForm(forms.ModelForm):
     name = forms.CharField(required=True, label='Название')
     description = forms.CharField(required=True, label='Описание')
     category = forms.ModelChoiceField(required=True, queryset=Category.objects.all().order_by('name'))
-    photo = forms.ImageField(required=False, label='Фото', widget=forms.ClearableFileInput)
+    photo = forms.ImageField(required=True, label='Фото', widget=forms.ClearableFileInput)
 
     def clean(self):
         super().clean()
