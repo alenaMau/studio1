@@ -1,0 +1,38 @@
+{% extends "layout/basic.html" %}
+{% load bootstrap4 %}
+{% block title %} Профиль пользователя {% endblock %}
+{% block content %}
+<h2>Профиль пользователя {{ user.username }}</h2>
+<h2>ФИО пользователя {{ user.fio }}</h2>
+{% if user.is_superuser %}
+<p>Это суперадмин</p>
+{% else %}
+<p>Это обычный пользватель</p>
+{% endif %}
+{% if user.first_name and user.last_name %}
+<p>Здравствуйте, {{ user.fio }}</p>
+{% else %}
+{% endif %}
+{% if user.is_user %}
+<ul class="nav nav-pills">
+  <li class="nav-item">
+    <a type="button" class="nav-link active" href="{% url 'order_creation' %}">Создать заявку</a><br>
+  </li>
+</ul>
+{% else %}
+{% endif %}
+<h2>Ваши заявки</h2><br>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="button" class="btn btn-outline-primary">Применить фильтр</button>
+</form>
+{% for order in orders %}
+<ul class="list-group list-group-flush">
+    <br><h5>Название: {{order.name}}</h5>
+  <li class="list-group-item">Статус: {{order.status_id}}<br>Категория: {{order.category_id}}<br>
+      Дата : {{order.date}}<br>Описание: {{order.description}}
+  </li>
+</ul>
+{% endfor %}
+{% endblock %}
