@@ -1,0 +1,21 @@
+{% extends "layout/basic.html" %}
+{% load bootstrap4 %}
+{% block content %}
+    <h2>Заявки</h2>
+    <ul>
+       {% for order in orders %}
+            <li style="margin: 10px;">
+                {% if order.id %}
+                    <a href="{% url 'order_edit' order_id=order.id %}">{{ order.name }}</a>
+                {% else %}
+                    <p>Order ID is missing or undefined</p>
+                {% endif %}
+            </li>
+        <form method="post" action="{% url 'delete_order_admin' %}">
+            {% csrf_token %}
+            <input type="hidden" name="order_id" value="{{ order.id }}">
+            <button class="btn btn-danger" type="submit" id="delete-button">Удалить</button>
+        </form>
+        {% endfor %}
+    </ul>
+{% endblock %}

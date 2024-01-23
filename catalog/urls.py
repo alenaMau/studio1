@@ -1,6 +1,6 @@
-from django.urls import re_path
+from django.urls import re_path, path
 from . import views
-from .views import BBLoginView, delete_order
+from .views import BBLoginView, delete_order, order_edit, order_list, delete_order_admin, add_category, delete_category
 from .views import BBLogoutView
 from .views import profile
 from .views import ChangeUserView
@@ -20,7 +20,11 @@ urlpatterns = [
     re_path('accounts/password/change/', BBPasswordChangeView.as_view(), name='password_change'),
     re_path('accounts/order/creation/', OrderCreationView.as_view(), name='order_creation'),
     re_path(r'^order/$', OrderCreationView.as_view(), name='order'),
-    re_path('delete_order/<uuid:order_id>/', delete_order, name='delete_order')
-
+    path('add_category/', add_category, name='add_category'),
+    path('delete_category/', delete_category, name='delete_category'),
+    re_path('orders/list', order_list, name='order_list'),
+    re_path('delete_order/<uuid:order_id>/', delete_order, name='delete_order'),
+    re_path('delete_order_admin/<uuid:order_id>/', delete_order_admin, name='delete_order_admin'),
+    path('orders/edit/<uuid:order_id>/', order_edit, name='order_edit')
 ]
 

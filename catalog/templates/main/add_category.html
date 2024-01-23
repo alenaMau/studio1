@@ -1,0 +1,13 @@
+{% extends "layout/basic.html" %}
+{% load bootstrap4 %}
+{% block content %}
+<h2>Добавить категорию</h2>
+<form method="post" action="{% url 'add_category' %}">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button class="btn btn-danger" type="submit">Добавить</button>
+</form>
+
+<a class="btn btn-danger mt-5" type="submit" href="{% url 'delete_category' %}">Удалить категорию</a>
+
+{% endblock %}

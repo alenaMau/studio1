@@ -1,0 +1,10 @@
+{% extends "layout/basic.html" %}
+{% load bootstrap4 %}
+{% block content %}
+<h2>Удалить категорию</h2>
+<form method="post" action="{% url 'delete_category' %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button class="btn btn-danger" type="submit">Удалить</button>
+</form>
+{% endblock %}

@@ -2,6 +2,7 @@ from django import forms
 from django.core.validators import RegexValidator
 from .models import User, Category, Status
 from django.core.exceptions import ValidationError
+from django import forms
 from .models import Order
 
 
@@ -101,3 +102,19 @@ class StatusFilterForm(forms.Form):
     class Meta:
         model = Status
         fields = ('status')
+
+
+class OrderForm(forms.ModelForm):
+    class Meta:
+        model = Order
+        fields = ['name', 'description', 'category_id', 'status_id', 'photo', 'comment']
+
+
+class CategoryForm(forms.ModelForm):
+    class Meta:
+        model = Category
+        fields = ['name']
+
+
+class DeleteCategoryForm(forms.Form):
+    category_id = forms.ModelChoiceField(queryset=Category.objects.all(), empty_label=None)

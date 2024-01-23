@@ -1,11 +1,13 @@
+from django.core.checks import messages
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth.views import LoginView
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LogoutView
 from studio.studio import settings
-from .forms import ChangeUserInfoForm, StatusFilterForm
-from .models import User, Order, Status
+from .forms import ChangeUserInfoForm, StatusFilterForm, CategoryForm, DeleteCategoryForm
+from .models import User, Order, Status, Category
 from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import get_object_or_404
 from django.urls import reverse_lazy
@@ -15,6 +17,10 @@ from django.views.generic import CreateView
 from .forms import RegisterUserForm
 from django.views.generic import TemplateView
 from .forms import OrderCreationForm
+from django.shortcuts import render, get_object_or_404, redirect
+from .models import Order
+from .forms import OrderForm
+from django.contrib import messages
 
 
 # Create your views here.
@@ -37,6 +43,75 @@ def delete_order(request):
             return redirect('profile')
         order.delete()
     return redirect('profile')
+
+
+def delete_order_admin(request):
+    if request.method == 'POST':
+        order_id = request.POST.get('order_id')
+        order = get_object_or_404(Order, id=order_id)
+        user = get_object_or_404(User, id=request.user.id)
+        if user.is_superuser:
+            order.delete()
+    return redirect('order_list')
+
+
+def order_edit(request, order_id=None):
+    if order_id is not None:
+        order = get_object_or_404(Order, id=order_id)
+    else:
+        order = None
+
+    if request.method == 'POST':
+        form = OrderForm(request.POST, instance=order)
+        if form.is_valid():
+            if order:
+                order.delete()
+            form.save()
+            return redirect('order_list')
+    else:
+        form = OrderForm(instance=order)
+
+    return render(request, 'main/order_edit.html', {'form': form})
+
+
+def order_list(request):
+    if request.user.is_superuser != True:
+        return redirect('index')
+
+    orders = Order.objects.all()
+    return render(request, 'main/order_list.html', {'orders': orders})
+
+
+def add_category(request):
+    if request.user.is_superuser != True:
+        return redirect('index')
+
+    if request.method == 'POST':
+        form = CategoryForm(request.POST)
+        if form.is_valid():
+            form.save()
+            messages.success(request, 'Добавление прошло успешно.')
+    else:
+        form = CategoryForm()
+
+    return render(request, 'main/add_category.html', {'form': form})
+
+
+def delete_category(request):
+    if request.user.is_superuser != True:
+        return redirect('index')
+
+    if request.method == 'POST':
+        form = DeleteCategoryForm(request.POST)
+        if form.is_valid():
+            category_id = form.cleaned_data['category_id'].id
+            category = get_object_or_404(Category, id=category_id)
+            category.delete()
+            messages.success(request, 'Удаление прошло успешно.')
+    else:
+        form = DeleteCategoryForm()
+
+    return render(request, 'main/delete_category.html', {'form': form})
 
 
 class BBLoginView(LoginView):

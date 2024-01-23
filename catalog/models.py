@@ -58,6 +58,9 @@ class Order(models.Model):
 
         self.photo = filename
 
+    def delete_category(self):
+        self.delete()
+
     def __str__(self):
         return '%s %s %s' % (self.name, self.description, self.photo)
 
